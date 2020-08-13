@@ -3,7 +3,7 @@ import axios from 'axios'
 
 function Arrows(props){
 const { setNasaData } = props
-
+const [day, setDay] = useState(1)
 
 
     const Arrow = ({ direction, clickFunction, glyph }) => (
@@ -13,38 +13,68 @@ const { setNasaData } = props
           { glyph }
         </div>
       )
-      let today = new Date()
 
-      let dateOf = 'date='+today.getFullYear()+'-0'+(today.getMonth()+1)+'-'+(today.getDate()-1);//This needs to change wont work with double diget months. //or more than one day back
-      
-      
-      let forward = 'date='+today.getFullYear()+'-0'+(today.getMonth()+1)+'-'+((today.getDate()+1-1)) //This needs to change wont work completly 
-      
-        const letPreviousDayBe = (event) => {
-      axios.get(`https://api.nasa.gov/planetary/apod?api_key=82gkLHZFaIjC60DIBHyY4wasGeLvAoOUh4EQB8t7&${dateOf}`)
-      .then((nasaData)=>{
-        setNasaData(nasaData.data)//Why is this not counted as a function am i passing it in incorrectly?
-      })
-      .catch((error)=>{
-        console.log(error)
-      })
-      }
-      const letNextDayBe = (event) => {
-          axios.get(`https://api.nasa.gov/planetary/apod?api_key=82gkLHZFaIjC60DIBHyY4wasGeLvAoOUh4EQB8t7&${forward}`)
-          .then((nasaData)=>{
-            setNasaData(nasaData.data)//Why is this not counted as a function am i passing it in incorrectly?
-          })
-          .catch((error)=>{
+
+    let startDate = new Date()// This give the current Date
+
+const getMeDate = (direction)=>{
+        if(direction === 'forward'){
+            return 'date='+startDate.getFullYear()+'-0'+(startDate.getMonth()+1)+'-'+((startDate.getDate()+day-1))
+        } 
+    return 'date='+startDate.getFullYear()+'-0'/*<--This is a problem right here*/+(startDate.getMonth()+1)+'-'+(startDate.getDate()-day);
+}
+
+const change = (back) =>{
+    if(back==='back'){
+        return (event) => {
+            axios.get(`https://api.nasa.gov/planetary/apod?api_key=n4z0eQp21OR5mlZa5L9d6vewzCnazllNDPZdmd2I&${getMeDate()}`)
+            .then((nasaData)=>{
+                setNasaData(nasaData.data)
+                setDay(day+1)
+            })
+            .catch((error)=>{
+                console.log(error)
+            })
+        }
+    }
+    return (event) => {
+        axios.get(`https://api.nasa.gov/planetary/apod?api_key=n4z0eQp21OR5mlZa5L9d6vewzCnazllNDPZdmd2I&${getMeDate('forward')}`)
+        .then((nasaData)=>{
+            setNasaData(nasaData.data)
+        })
+        .catch((error)=>{
             console.log(error)
-          })
-          }
+        })
+    }
+}
+
+// const letPreviousDayBe = (event) => {
+//     axios.get(`https://api.nasa.gov/planetary/apod?api_key=n4z0eQp21OR5mlZa5L9d6vewzCnazllNDPZdmd2I&${getMeDate()}`)
+//     .then((nasaData)=>{
+//         setNasaData(nasaData.data)
+//         setDay(day+1)
+//     })
+//     .catch((error)=>{
+//         console.log(error)
+//     })
+// }
+
+// const letNextDayBe = (event) => {
+//     axios.get(`https://api.nasa.gov/planetary/apod?api_key=n4z0eQp21OR5mlZa5L9d6vewzCnazllNDPZdmd2I&${getMeDate('forward')}`)
+//     .then((nasaData)=>{
+//         setNasaData(nasaData.data)
+//     })
+//     .catch((error)=>{
+//         console.log(error)
+//     })
+// }
 
     return(
         <div>
             <span>
-                <Arrow direction='left'  clickFunction={letPreviousDayBe} glyph="&#9664;"/>
+                <Arrow direction='left'  clickFunction={change('back')} glyph="&#9664;"/>
                 Previous Day:
-                <Arrow direction='right' clickFunction={letNextDayBe} glyph="&#9654;"/>
+                <Arrow direction='right' clickFunction={change()} glyph="&#9654;"/>
                 Next Day
             </span>
         </div>

@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios'
-
+import Arrows from './Arrows'
 
 function PhotoOfTheDay() {
     const [nasaData, setNasaData] = useState([])
-    const [inputValue, setInputValue] = useState(``)
+    const [inputDay, setInputDay] = useState(``)
+    const [inputMonth, setInputMonth] = useState(``)
+    const [inputYear, setInputYear] = useState(``)
 
 
-let changes = (input)=>{
+let changeDay = (input)=>{
     const { value } = input.target
-    setInputValue(value)
+    setInputDay(value)
 }
-
-let date = `date=${inputValue}`
+let changeMonth = (input)=>{
+    const { value } = input.target
+    setInputMonth(value)
+}
+let changeYear = (input)=>{
+    const { value } = input.target
+    setInputYear(value)
+}
+let date = `date=${inputYear}-${inputMonth}-${inputDay}`
 
 
 let letDateBe = (event) =>{
@@ -38,14 +47,22 @@ let letDateBe = (event) =>{
     })
   },[])
 
-
+  
   return (
     <div className="App">
       <h1>Nasa Photo Of The Day: {nasaData.title} </h1>
 
-        <form><input type='numbers' placeholder='Enter Date: Like: 2000-02-14' value = {inputValue} onChange = {changes} /> <button onClick={(event) => letDateBe(event)} >Enter</button> </form>
+        <form>
+            <input type='text' placeholder='Year' value = {inputYear} onChange = {changeYear} />&nbsp;
+            <input type='text' placeholder='Month' value = {inputMonth} onChange = {changeMonth} />&nbsp;
+            <input type='numbers' placeholder='Day' value = {inputDay} onChange = {changeDay} /> &nbsp;
+              
+            <button onClick={(event) => letDateBe(event)} >Enter</button> </form>
+            <Arrows setNasaData={setNasaData}/>
 
-      <img src={nasaData.url} alt="Comet Neowise over time and its tails direction with the date that it was taken!"/>
+      <img src={nasaData.url} alt=""/>
+
+
       <p><span>Copyright: {nasaData.copyright } </span><span>Date Taken: {nasaData.date}</span></p>
       <p> {nasaData.explanation}<br/><span role="img" aria-label='go!'>🚀</span>
       </p>

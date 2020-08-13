@@ -7,7 +7,7 @@ function PhotoOfTheDay() {
     const [inputDay, setInputDay] = useState(``)
     const [inputMonth, setInputMonth] = useState(``)
     const [inputYear, setInputYear] = useState(``)
-
+    const [day, setDay] = useState(0)
 
 let changeDay = (input)=>{
     const { value } = input.target
@@ -36,18 +36,26 @@ let letDateBe = (event) =>{
     })
 };
 
-  useEffect(()=>{
+useEffect(()=>{
+    axios.get(`https://api.nasa.gov/planetary/apod?api_key=n4z0eQp21OR5mlZa5L9d6vewzCnazllNDPZdmd2I&${day}`)
+        .then((nasaData)=>{
+            setNasaData(nasaData.data)
+         })
+    .catch((error)=>{
+        console.log(error)
+        })
+},[day])
+
+useEffect(()=>{
     axios.get(`https://api.nasa.gov/planetary/apod?api_key=n4z0eQp21OR5mlZa5L9d6vewzCnazllNDPZdmd2I&`)
     .then((nasaData)=>{
       setNasaData(nasaData.data)
-    //   console.log(nasaData)
     })
     .catch((error)=>{
       console.log(error)
     })
-  },[])
+},[])
 
-  
   return (
     <div className="App">
       <h1>Nasa Photo Of The Day: {nasaData.title} </h1>
@@ -58,7 +66,7 @@ let letDateBe = (event) =>{
             <input type='numbers' placeholder='Day' value = {inputDay} onChange = {changeDay} /> &nbsp;
               
             <button onClick={(event) => letDateBe(event)} >Enter</button> </form>
-            <Arrows setNasaData={setNasaData}/>
+            <Arrows setDay={setDay}  setNasaData={setNasaData}/>
 
       <img src={nasaData.url} alt=""/>
 
